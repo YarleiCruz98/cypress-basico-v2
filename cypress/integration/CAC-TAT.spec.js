@@ -100,7 +100,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
         cy.get('button[type="submit"]')
             .click()
         cy.get('.error')
-            .should('contains.text', 'Valide os camposss obrigatórios!')
+            .should('contains.text', 'Valide os campos obrigatórios!')
             .should('be.visible')
     })
     it('envia o formuário com sucesso usando um comando customizado', function() {
