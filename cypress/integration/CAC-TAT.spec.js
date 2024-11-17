@@ -39,7 +39,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
             .should('contains.text', 'Valide os campos obrigatórios!')
             .should('be.visible')
     })
-    it('exibe mensagem de erro quando o telefone se torna', function() {
+    it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function() {
         cy.title().should('eq', 'Central de Atendimento ao Cliente TAT')
         cy.get('#firstName')
             .type('Fulano')
@@ -144,4 +144,59 @@ describe('Central de Atendimento ao Cliente TAT', function() {
             .uncheck()
             .should('not.be.checked')
     })
+
+    it('seleciona um arquivo da pasta fixtures', function() {
+        cy.get('#file-upload')
+            .selectFile('./cypress/fixtures/example.json')
+            .should(function($input){
+                console.log($input)
+                expect($input[0].files[0].name).to.eq('example.json')
+            })
+    })
+
+    it('seleciona um arquivo simulando um drag-and-drop', function() {
+        cy.get('#file-upload')
+        .should('not.have.value')
+            .selectFile('./cypress/fixtures/example.json', {action: 'drag-drop'})
+            .should(function($input){
+                console.log($input)
+                expect($input[0].files[0].name).to.eq('example.json')
+            })
+    })
+
+    it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', function() {
+        cy.fixture('example').as('example')
+        cy.get('#file-upload')
+        .should('not.have.value')
+            .selectFile('@example', {action: 'drag-drop'})
+            .should(function($input){
+                console.log($input)
+                expect($input[0].files[0].name).to.eq('example')
+            })
+    })
+    it('Verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', function() {
+        cy.get('a[href="privacy.html"]')
+            .should('have.attr', 'target', '_blank')
+    })
+    it('acessa a página da política de privacidade removendo o target e então clicando no link', function() {
+        cy.get('a[href="privacy.html"]')
+            .should('have.attr', 'target', '_blank')
+            .invoke('removeAttr', 'target')
+            .click()
+        cy.url()
+            .should('include', 'privacy.html')
+    })
+
+    it('testa a página da política de privacidade de forma independente', function() {
+        cy.get('a[href="privacy.html"]')
+            .should('have.attr', 'target', '_blank')
+            .invoke('removeAttr', 'target')
+            .click()
+        cy.url()
+            .should('include', 'privacy.html')
+        cy.get('#title')
+            .should('have.text', 'CAC TAT - Política de privacidade')
+            .and('be.visible')
+    })
   })
+
